@@ -9,6 +9,6 @@ select companies.state_code as state_code,
     from tutorial.crunchbase_companies companies
     left join tutorial.crunchbase_acquisitions acquisitions 
            on companies.permalink = acquisitions.company_permalink
-    where companies.state_code <> ''
+    where companies.state_code is not NULL
     group by companies.state_code
     order by acquired_count desc
