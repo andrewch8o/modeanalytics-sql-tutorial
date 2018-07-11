@@ -1,3 +1,4 @@
+-- https://community.modeanalytics.com/sql/tutorial/sql-joins-where-vs-on/
 -- Write a query that shows a company's name, "status" (found in the Companies table), 
 --  and the number of unique investors in that company. 
 --  Order by the number of investors from most to fewest. 
