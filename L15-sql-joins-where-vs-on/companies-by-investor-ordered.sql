@@ -114,3 +114,48 @@ where investor_name = 'SV Angel' and investor_permalink<>'/financial-organizatio
    The only difference would be that my solution also is to produce list of investors that have not made
      any investments.
 */
+
+-- Further re-verification:
+-- My query
+SELECT 
+  investments.investor_permalink as investor_permalink,
+  count(distinct companies.permalink) as number_of_companies_invested_in
+FROM tutorial.crunchbase_investments investments 
+LEFT JOIN tutorial.crunchbase_companies companies
+  ON investments.company_permalink = companies.permalink
+GROUP BY 1
+ORDER BY 2 ASC
+/* TOP 10
+/company/caele-holding	0
+/company/cytyc	0
+/company/axel-springer	0
+/company/cabot-solutions-pvt-ltd	0
+/company/clifton-cowley-ventures	0
+/company/curious-pictures	0
+/company/appincloud-sweden-ab	0
+/company/avaco	0
+/company/bluefrog-interactive	0
+/company/burda-international	0
+*/
+
+-- Suggested solution
+SELECT CASE WHEN investments.investor_name IS NULL THEN 'No Investors'
+            ELSE investments.investor_name END AS investor,
+       COUNT(DISTINCT companies.permalink) AS companies_invested_in
+  FROM tutorial.crunchbase_companies companies
+  LEFT JOIN tutorial.crunchbase_investments investments
+    ON companies.permalink = investments.company_permalink
+ GROUP BY 1
+ ORDER BY 2 ASC
+/*TOP 10
+Access Partners	1
+Acer	1
+Accera Venture Partners	1
+Access National Bank	1
+Accor Services	1
+Ace Limited	1
+Accelerace	1
+Accelerator Fund	1
+Access	1
+Access Medical Ventures	1
+*/
