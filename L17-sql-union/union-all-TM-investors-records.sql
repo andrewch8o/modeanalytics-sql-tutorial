@@ -8,7 +8,7 @@ SELECT company_permalink,
        company_name,
        investor_name
 FROM tutorial.crunchbase_investments_part1
-WHERE LOWER(company_name) LIKE 't%'
+WHERE company_name ILIKE 't%'
 
 UNION ALL
 
@@ -16,4 +16,4 @@ SELECT company_permalink,
        company_name,
        investor_name
 FROM tutorial.crunchbase_investments_part2
-WHERE LOWER(company_name) LIKE 'm%'
+WHERE company_name ILIKE 'm%'
