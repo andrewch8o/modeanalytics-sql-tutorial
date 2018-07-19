@@ -4,9 +4,22 @@
 -- Hint: you will have to use the tutorial.crunchbase_companies table as well as the investments tables. 
 --   And you'll want to group by status and dataset.
 
--- As the question concerns number of investors ( and not investments ) - using DISTINCT to count investors
-select companies.status, COUNT(DISTINCT investments.investor_permalink)
-from tutorial.crunchbase_companies companies
-left join tutorial.crunchbase_investments_part1 investments
-on companies.permalink = investments.company_permalink
-group by 1
+SELECT 
+  'crunchbase_investments_part1' AS data_set, 
+  companies.status AS companies_status, 
+  COUNT(DISTINCT investments.investor_permalink) AS investors_count
+FROM tutorial.crunchbase_companies companies
+LEFT JOIN tutorial.crunchbase_investments_part1 investments
+ON companies.permalink = investments.company_permalink
+GROUP BY 1, 2
+
+UNION ALL
+
+SELECT 
+  'crunchbase_investments_part2' AS data_set, 
+  companies.status AS companies_status, 
+  COUNT(DISTINCT investments.investor_permalink) AS investors_count
+FROM tutorial.crunchbase_companies companies
+LEFT JOIN tutorial.crunchbase_investments_part2 investments
+ON companies.permalink = investments.company_permalink
+GROUP BY 1, 2
