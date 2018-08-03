@@ -110,3 +110,30 @@ pl,c_founded,a_acquired,c_category,a_acquired_tmstmp,c_founded_tmstmp,founded_ac
 -- Two questions remain:
 --   * What is the difference in date comparison?
 --   * Why does it work differently only on these three records?
+
+-- The following has place to be:
+select interval '1800 days' < interval '5 years' --false
+select interval '1799 days' < interval '5 years' --true
+select interval '1800 days' = interval '5 years' --true
+
+-- Looks like the above is due to this
+-- https://stackoverflow.com/questions/26724547/postgres-1-year-equals-360-days
+
+/* Aha moment. Don't compare intervals if dates are involved. Add an interval to a date and then compare dates */
+SELECT
+    companies.permalink as pl,
+    companies.founded_at as c_founded,
+    acquisitions.acquired_at as a_acquired,
+    companies.category_code as c_category,
+    TO_TIMESTAMP(acquisitions.acquired_at, 'MM/DD/YY') as a_acquired_tmstmp,
+    TO_TIMESTAMP(companies.founded_at, 'MM/DD/YY') as c_founded_tmstmp,
+    AGE(TO_TIMESTAMP(acquisitions.acquired_at, 'MM/DD/YY'),TO_TIMESTAMP(companies.founded_at, 'MM/DD/YY')) as founded_acquired_diff,
+    TO_TIMESTAMP(acquisitions.acquired_at, 'MM/DD/YY') - TO_TIMESTAMP(companies.founded_at, 'MM/DD/YY') <= INTERVAL '5 years' as within_5_yrs
+  FROM tutorial.crunchbase_companies companies
+  JOIN tutorial.crunchbase_acquisitions acquisitions
+  ON companies.permalink = acquisitions.company_permalink
+  WHERE 
+  companies.founded_at IS NOT NULL
+  AND TO_TIMESTAMP(acquisitions.acquired_at, 'MM/DD/YY') <= TO_TIMESTAMP(companies.founded_at, 'MM/DD/YY') + INTERVAL '5 years'
+  AND companies.category_code = 'software'
+  AND companies.permalink IN ('/company/pokelabo','/company/hiwired','/company/real-girls-media-network-inc')
